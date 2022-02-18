@@ -1,0 +1,123 @@
+const { Shop } = require('./gilded_rose');
+const { Item } = require('./items/itemlist');
+
+const Specials = {
+  Brie: 'Aged Brie',
+  Pass: 'Backstage passes to a TAFKAL80ETC concert',
+  Legendary: 'Sulfuras, Hand of Ragnaros',
+};
+
+describe('Gilded Rose', () => {
+  test('should decrement and degrade a random item', () => {
+    const gildedRose = new Shop([new Item('foo', 5, 5)]);
+    const items = gildedRose.updateQuality();
+    const fooItem = items.shift();
+    expect(fooItem.name).toEqual('foo');
+    expect(fooItem.sellIn).toEqual(4);
+    expect(fooItem.quality).toEqual(4);
+  });
+
+  test('should decrease quality of non-special item by 2 when past use-by date', () => {
+    const GildedRose = new Shop([new Item('foo', 0, 5)]);
+    const items = GildedRose.updateQuality();
+    const item = items.shift();
+    expect(item.quality).toEqual(3);
+    expect(item.sellIn).toEqual(-1);
+  });
+
+  test('should not degrade item quality below zero', () => {
+    const gildedRose = new Shop([new Item('foo', 0, 0)]);
+    const items = gildedRose.updateQuality();
+    const fooItem = items.shift();
+    expect(fooItem.name).toEqual('foo');
+    expect(fooItem.sellIn).toEqual(-1);
+    expect(fooItem.quality).toEqual(0);
+  });
+
+  test('should not degrade legendary items like Sulfuras', () => {
+    const GildedRose = new Shop([new Item(Specials.Legendary, 0, 0)]);
+    const items = GildedRose.updateQuality();
+    expect(items[0].quality).toEqual(80);
+  });
+
+  test('should increase Aged Brie quality as sellIn decreases', () => {
+    const GildedRose = new Shop([new Item(Specials.Brie, 3, 1)]);
+    const items = GildedRose.updateQuality();
+    const brie = items.shift();
+    expect(brie.sellIn).toEqual(2);
+    expect(brie.quality).toEqual(2);
+  });
+
+  test('should increase Aged Brie quality twice as fast when sellIn is below 0', () => {
+    const GildedRose = new Shop([new Item(Specials.Brie, 0, 2)]);
+    const items = GildedRose.updateQuality();
+    const brie = items.shift();
+    expect(brie.sellIn).toEqual(-1);
+    expect(brie.quality).toEqual(4);
+  });
+
+  test('should increase Backstage Pass quality by default', () => {
+    const GildedRose = new Shop([new Item(Specials.Pass, 20, 10)]);
+    const items = GildedRose.updateQuality();
+    const item = items.shift();
+    expect(item.sellIn).toEqual(19);
+    expect(item.quality).toEqual(11);
+  });
+
+  test('should increase Backstage Pass quality by 2 when sellIn is 10 or less', () => {
+    const GildedRose = new Shop([new Item(Specials.Pass, 10, 11)]);
+    const items = GildedRose.updateQuality();
+    const pass = items.shift();
+    expect(pass.sellIn).toEqual(9);
+    expect(pass.quality).toEqual(13);
+  });
+
+  test('should increase Backstage Pass quality by 3 when sellIn is 5 or less', () => {
+    const GildedRose = new Shop([new Item(Specials.Pass, 5, 20)]);
+    const items = GildedRose.updateQuality();
+    const pass = items.shift();
+    expect(pass.sellIn).toEqual(4);
+    expect(pass.quality).toEqual(23);
+  });
+
+  test('should set Backstage Pass quality to 0 when the event has passed', () => {
+    const GildedRose = new Shop([new Item(Specials.Pass, 0, 20)]);
+    const items = GildedRose.updateQuality();
+    const pass = items.shift();
+    expect(pass.sellIn).toEqual(-1);
+    expect(pass.quality).toEqual(0);
+  });
+
+  test('should decrement conjured items quality twice as quickly', () => {
+    const GildedRose = new Shop([new Item('Conjured Item', 5, 10, true)]);
+    const items = GildedRose.updateQuality();
+    const cake = items.shift();
+    expect(cake.quality).toEqual(8);
+    expect(cake.sellIn).toEqual(4);
+  });
+
+  test('should decrease Conjured items even further in quality after use-by date', () => {
+    const GildedRose = new Shop([new Item('Conjured Item', 0, 10)]);
+    const items = GildedRose.updateQuality();
+    const mana = items.shift();
+    expect(mana.sellIn).toEqual(-1);
+    expect(mana.quality).toEqual(6);
+  });
+
+  test('should handle more than one item at a time', () => {
+    const GildedRose = new Shop([
+      new Item('Conjured Item', 5, 10),
+      new Item(Specials.Brie, 5, 5),
+    ]);
+
+    const items = GildedRose.updateQuality();
+
+    expect(items.length).toEqual(2);
+
+    expect(items[0].quality).toEqual(8);
+    expect(items[0].sellIn).toEqual(4);
+    expect(items[1].quality).toEqual(6);
+    expect(items[1].sellIn).toEqual(4);
+  });
+});
+

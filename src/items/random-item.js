@@ -1,0 +1,15 @@
+
+var Item = require('./item');
+
+// RandomItem exists purely for testing purposes. It inherits from item.
+
+//RandomItem's update function decrements the sellIn attribute, 
+// then looks at it to see how much quality should change by.
+class RandomItem extends Item {
+  update() {
+    this.sellIn -= 1;
+    this.quality = Math.max((this.sellIn > 0 ? this.quality - 1 : this.quality - 2), 0);
+  }
+}
+
+module.exports = RandomItem;
