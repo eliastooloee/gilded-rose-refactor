@@ -25,7 +25,7 @@ describe('Gilded Rose', () => {
     expect(item.sellIn).toEqual(-1);
   });
 
-  test('should not degrade item quality below zero', () => {
+  test('should not decrement item quality below zero', () => {
     const gildedRose = new Shop([new Item('foo', 0, 0)]);
     const items = gildedRose.updateQuality();
     const fooItem = items.shift();

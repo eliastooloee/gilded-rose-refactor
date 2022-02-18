@@ -80,9 +80,13 @@ Moving all of the increment logic to the individual update functions means that 
 
 Clearly we're going to need a significant number of tests. I think a bakers dozen (13 is lucky, right?) should cover it. 
 
-Unforutnately I'm out of time, sp I can't detail the tests in this ReadMe, but please have a look at `gilded_rose.test.js` to see them in action. 
+Unforutnately I'm out of time, so I can't detail the tests in this ReadMe, but please have a look at `gilded_rose.test.js` to see them in action. 
 
 Alternatively, you could run the below commands:
+
+I'm gonna go ahead and assume you have Node installed if you're reading this. You almost certainly know the drill anyway, but make sure to run:
+
+```npm install`` first to get all the dependencies. 
 
 ```npm run test``` to run the tests
 
@@ -100,6 +104,7 @@ Were I to have additional time here's what I'd do:
 
 1. More tests to make sure all edge cases are caught. 
 2. Use React to build an actual web store for Gilded Rose. 
+3. Totally blow this up and redo it in TypeScript instead. 
 
 
 

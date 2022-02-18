@@ -33,6 +33,8 @@ class Shop {
   // This means we don't have to re-write this function if we want to add
   // new items in the future.  
   updateQuality() {
+    //Using forEach instead of .map because we want to mutate the original array,
+    // not create a new array.
     this.items.forEach((item) => item.update());
     return this.items;
   }

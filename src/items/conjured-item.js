@@ -3,6 +3,7 @@ const Item = require('./item');
 
 //ConjuredItem requires item so it can inherit
 
+//Conjured items degrade twice as fast, so the update method reflects that.
 class ConjuredItem extends Item {
   update() {
     this.sellIn -= 1;
